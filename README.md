@@ -1,17 +1,28 @@
-# Calculator, GST Calculator & HSN Finder
+# Premium GST Calculator
 
-A simple browser-based project with:
+This project includes:
 
-- A basic arithmetic calculator.
-- An Indian GST calculator with add/remove GST, selectable slabs, and CGST/SGST or IGST display.
-- An HSN finder with a small sample catalog.
+- a basic arithmetic calculator
+- an Indian GST calculator with add/remove GST logic
+- a sample HSN lookup panel for quick product code searching
+- a premium dark theme with mobile-friendly layout
 
-## Run locally
+## How to use
 
-Open `index.html` in a browser.
+Open `index.html` in any browser.
 
-## View online
+## Notes
 
-The project is prepared as a static site. To publish it with GitHub Pages, open the repository's **Settings → Pages**, choose **Deploy from a branch**, select the `main` branch and `/ (root)` folder, and save. GitHub will show the published URL in the Pages settings.
+The HSN finder is a lightweight sample catalog for demonstration only. It is not an official tax database and should not be used as final legal or tax determination. Always confirm GST classification using the latest government or tariff guidance for actual business use.
 
-The HSN catalog is only a sample; verify a product's classification and applicable rate using official tariff information before relying on it for compliance.
+## GitHub Pages
+
+To publish it on GitHub Pages:
+
+1. Open repository settings
+2. Go to Pages
+3. Select `Deploy from a branch`
+4. Choose `main` and `/ (root)`
+5. Save
+
+GitHub will provide a live URL for the project.

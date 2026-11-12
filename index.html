@@ -3,218 +3,315 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A simple calculator, Indian GST calculator, and sample HSN finder." />
-  <title>Calculator, GST Calculator & HSN Finder</title>
+  <title>Premium GST Calculator</title>
   <style>
-    * {
-      box-sizing: border-box;
+    :root {
+      --bg: #0f172a;
+      --bg-2: #111827;
+      --panel: rgba(15, 23, 42, 0.92);
+      --panel-soft: rgba(30, 41, 59, 0.75);
+      --card: #1e293b;
+      --card-2: #0b1120;
+      --line: rgba(148, 163, 184, 0.22);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --accent-3: #f59e0b;
+      --danger: #fb7185;
+      --shadow: 0 18px 35px rgba(2, 6, 23, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.12), transparent 28%),
+        linear-gradient(160deg, var(--bg), var(--bg-2));
       font-family: Arial, sans-serif;
+      color: var(--text);
     }
 
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      background: #f1f5f9;
-      color: #172033;
+      display: flex;
+      justify-content: center;
+      padding: 32px 18px;
     }
 
     .app {
-      width: min(100%, 1000px);
+      width: min(1200px, 100%);
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
       gap: 20px;
     }
 
     .card {
-      background: white;
-      border-radius: 16px;
-      padding: 22px;
-      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.1);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.8));
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 20px;
     }
 
     h1, h2 {
-      margin: 0 0 16px;
-      font-size: 1.25rem;
+      margin: 0 0 18px;
+      font-size: clamp(1.2rem, 1.7vw, 1.55rem);
+      letter-spacing: 0.02em;
+    }
+
+    .mini-label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
     input, select {
       width: 100%;
-      padding: 12px;
-      margin: 6px 0 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      color: var(--text);
       font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: rgba(56, 189, 248, 0.8);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16);
     }
 
     .display {
-      height: 58px;
+      width: 100%;
+      min-height: 70px;
       text-align: right;
-      font-size: 1.6rem;
-      background: #f8fafc;
+      font-size: clamp(1.8rem, 4vw, 2.3rem);
+      padding: 14px 16px;
+      background: rgba(2, 6, 23, 0.85);
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      color: #f8fafc;
+      margin-bottom: 14px;
     }
 
-    .buttons, .gst-keypad {
+    .btn-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
     }
 
     button {
-      padding: 13px 8px;
-      border: 0;
-      border-radius: 8px;
-      background: #e2e8f0;
-      color: #172033;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 8px;
       font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
+      transition: transform 0.15s ease, filter 0.2s ease;
+      color: #fff;
+      background: rgba(148, 163, 184, 0.14);
     }
 
     button:hover {
-      filter: brightness(0.95);
+      transform: translateY(-1px);
+      filter: brightness(1.06);
     }
 
-    button:focus-visible, input:focus-visible, select:focus-visible {
-      outline: 3px solid #93c5fd;
-      outline-offset: 2px;
+    .char {
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text);
     }
 
     .operator {
-      background: #ffca58;
+      background: rgba(245, 158, 11, 0.2);
+      color: #f8d98e;
     }
 
     .clear {
-      background: #fca5a5;
-    }
-
-    .equal, .action {
-      background: #2563eb;
-      color: white;
+      background: rgba(251, 113, 133, 0.18);
+      color: #fca5b0;
     }
 
     .equal {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
       grid-column: span 2;
     }
 
-    .zero {
-      grid-column: span 2;
+    .gst-amount-box {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
     }
 
-    .mode {
-      display: flex;
-      gap: 16px;
-      margin: 4px 0 14px;
+    .gst-amount-box button {
+      background: rgba(56, 189, 248, 0.1);
+      color: #bfe9ff;
     }
 
-    .mode label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.95rem;
-    }
-
-    .mode input {
-      width: auto;
-      margin: 0;
-    }
-
-    .actions {
+    .gst-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
-    .gst-keypad {
-      margin-top: 4px;
+    .action-btn {
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      color: white;
+      padding: 14px 10px;
     }
 
-    .result {
+    .mode-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 12px 0 16px;
+      color: var(--muted);
+    }
+
+    .mode-row label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .mode-row input {
+      width: auto;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+
+    .result-box {
       margin-top: 16px;
-      padding: 14px;
-      background: #f8fafc;
-      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
       line-height: 1.7;
-      min-height: 50px;
-      overflow-wrap: anywhere;
+      color: var(--text);
+      min-height: 120px;
+    }
+
+    .result-box strong {
+      color: #f8fafc;
     }
 
     .hsn-note {
-      color: #475569;
+      color: var(--muted);
       font-size: 0.9rem;
-      line-height: 1.5;
+      line-height: 1.6;
       margin: 0 0 12px;
     }
 
-    .hsn-result {
+    .hsn-table-wrap {
+      margin-top: 12px;
       overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
     }
 
-    .hsn-result table {
+    table {
       width: 100%;
       border-collapse: collapse;
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    th, td {
       text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.94rem;
     }
 
-    .hsn-result th,
-    .hsn-result td {
-      padding: 10px 8px;
-      border-bottom: 1px solid #e2e8f0;
+    th {
+      color: #cbd5e1;
+      background: rgba(30, 41, 59, 0.8);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
-    .hsn-result th {
-      color: #334155;
-      font-size: 0.9rem;
+    td strong {
+      color: #f8fafc;
     }
 
-    .hsn-result td:first-child {
-      font-weight: bold;
-      white-space: nowrap;
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.24);
+      color: #bae6fd;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 18px 12px; }
+      .card { padding: 16px; }
+      .gst-amount-box { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .btn-grid { gap: 8px; }
+      button { padding: 14px 6px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <section class="card" aria-labelledby="basic-title">
-      <h1 id="basic-title">Basic Calculator</h1>
+    <section class="card" aria-labelledby="basic-calculator-title">
+      <h1 id="basic-calculator-title">Basic Calculator</h1>
       <input id="display" class="display" type="text" readonly aria-label="Calculator display" />
 
-      <div class="buttons">
+      <div class="btn-grid">
         <button class="clear" onclick="clearBasic()">C</button>
         <button class="operator" onclick="appendBasic('/')">÷</button>
         <button class="operator" onclick="appendBasic('*')">×</button>
         <button class="operator" onclick="appendBasic('-')">−</button>
 
-        <button onclick="appendBasic('7')">7</button>
-        <button onclick="appendBasic('8')">8</button>
-        <button onclick="appendBasic('9')">9</button>
+        <button class="char" onclick="appendBasic('7')">7</button>
+        <button class="char" onclick="appendBasic('8')">8</button>
+        <button class="char" onclick="appendBasic('9')">9</button>
         <button class="operator" onclick="appendBasic('+')">+</button>
 
-        <button onclick="appendBasic('4')">4</button>
-        <button onclick="appendBasic('5')">5</button>
-        <button onclick="appendBasic('6')">6</button>
+        <button class="char" onclick="appendBasic('4')">4</button>
+        <button class="char" onclick="appendBasic('5')">5</button>
+        <button class="char" onclick="appendBasic('6')">6</button>
         <button class="operator" onclick="appendBasic('%')">%</button>
 
-        <button onclick="appendBasic('1')">1</button>
-        <button onclick="appendBasic('2')">2</button>
-        <button onclick="appendBasic('3')">3</button>
-        <button onclick="deleteBasic()">⌫</button>
+        <button class="char" onclick="appendBasic('1')">1</button>
+        <button class="char" onclick="appendBasic('2')">2</button>
+        <button class="char" onclick="appendBasic('3')">3</button>
+        <button class="char" onclick="deleteBasic()">⌫</button>
 
-        <button class="zero" onclick="appendBasic('0')">0</button>
-        <button onclick="appendBasic('.')">.</button>
+        <button class="char" style="grid-column: span 2;" onclick="appendBasic('0')">0</button>
+        <button class="char" onclick="appendBasic('.')">.</button>
         <button class="equal" onclick="calculateBasic()">=</button>
       </div>
     </section>
 
     <section class="card" aria-labelledby="gst-title">
-      <h2 id="gst-title">Indian GST Calculator</h2>
+      <h2 id="gst-title">GST Calculator</h2>
 
-      <label for="amount">Amount (₹)</label>
-      <input id="amount" type="text" inputmode="decimal" placeholder="Enter amount or use keypad" />
+      <label class="mini-label" for="amount">Amount</label>
+      <input id="amount" type="text" inputmode="decimal" placeholder="Enter amount" />
 
-      <label for="rate">GST slab</label>
+      <label class="mini-label" for="rate">GST Slab</label>
       <select id="rate">
         <option value="0">0%</option>
         <option value="0.25">0.25%</option>
@@ -224,16 +321,18 @@
         <option value="40">40%</option>
       </select>
 
-      <div class="mode" role="group" aria-label="Supply type">
+      <div class="mode-row" role="group" aria-label="Transaction type">
         <label><input type="radio" name="supply" value="intra" checked /> Intra-state</label>
         <label><input type="radio" name="supply" value="inter" /> Inter-state</label>
       </div>
 
-      <div class="gst-keypad" aria-label="GST amount keypad">
-        <button class="clear" onclick="clearGSTAmount()">C</button>
-        <button onclick="deleteGSTAmount()">⌫</button>
-        <button onclick="appendGSTAmount('.')">.</button>
-        <button onclick="appendGSTAmount('0')">0</button>
+      <div class="badge-row">
+        <span class="badge">CGST</span>
+        <span class="badge">SGST</span>
+        <span class="badge">IGST</span>
+      </div>
+
+      <div class="gst-amount-box" aria-label="Amount keypad">
         <button onclick="appendGSTAmount('7')">7</button>
         <button onclick="appendGSTAmount('8')">8</button>
         <button onclick="appendGSTAmount('9')">9</button>
@@ -243,51 +342,47 @@
         <button onclick="appendGSTAmount('1')">1</button>
         <button onclick="appendGSTAmount('2')">2</button>
         <button onclick="appendGSTAmount('3')">3</button>
+        <button onclick="appendGSTAmount('.')">.</button>
+        <button onclick="appendGSTAmount('0')">0</button>
+        <button class="clear" onclick="clearGSTAmount()">C</button>
       </div>
 
-      <div class="actions">
-        <button class="action" onclick="calculateGST('add')">Add GST</button>
-        <button class="action" onclick="calculateGST('remove')">Remove GST</button>
+      <div class="gst-actions">
+        <button class="action-btn" onclick="calculateGST('add')">Add GST</button>
+        <button class="action-btn" onclick="calculateGST('remove')">Remove GST</button>
       </div>
 
-      <div id="gstResult" class="result" aria-live="polite">
-        Enter an amount, choose a slab, then add or remove GST.
+      <div id="gstResult" class="result-box" aria-live="polite">
+        Enter an amount, pick a slab, and calculate GST.
       </div>
     </section>
 
     <section class="card" aria-labelledby="hsn-title">
       <h2 id="hsn-title">HSN Finder</h2>
       <p class="hsn-note">
-        Search by product name or HSN code. Results are suggestions—verify the
-        classification for your exact product before using it on an invoice.
+        Search the sample catalog by product name or HSN code to quickly narrow down likely classification.
       </p>
 
-      <label for="hsnSearch">Product or HSN code</label>
-      <input
-        id="hsnSearch"
-        type="search"
-        placeholder="For example: rice or 1006"
-        oninput="searchHSN()"
-        autocomplete="off"
-      />
+      <label class="mini-label" for="hsnSearch">Search Product / HSN</label>
+      <input id="hsnSearch" type="search" placeholder="e.g. rice, 1006, milk" autocomplete="off" />
 
-      <div id="hsnResults" class="result hsn-result" aria-live="polite">
-        Enter a product name or code to search the sample catalog.
+      <div id="hsnResults" class="result-box" aria-live="polite">
+        Start typing to search the sample HSN catalog.
       </div>
     </section>
   </main>
 
   <script>
-    const basicDisplay = document.getElementById("display");
-    const amountInput = document.getElementById("amount");
+    const basicDisplay = document.getElementById('display');
+    const amountInput = document.getElementById('amount');
 
     function appendBasic(value) {
-      if (basicDisplay.value === "Error") basicDisplay.value = "";
+      if (basicDisplay.value === 'Error') basicDisplay.value = '';
       basicDisplay.value += value;
     }
 
     function clearBasic() {
-      basicDisplay.value = "";
+      basicDisplay.value = '';
     }
 
     function deleteBasic() {
@@ -297,36 +392,32 @@
     function calculateBasic() {
       const expression = basicDisplay.value;
       if (!expression || !/^[0-9+\-*/%.() ]+$/.test(expression)) {
-        basicDisplay.value = "Error";
+        basicDisplay.value = 'Error';
         return;
       }
 
       try {
         const result = Function('"use strict"; return (' + expression + ')')();
-        basicDisplay.value = Number.isFinite(result) ? String(result) : "Error";
+        basicDisplay.value = Number.isFinite(result) ? String(result) : 'Error';
       } catch {
-        basicDisplay.value = "Error";
+        basicDisplay.value = 'Error';
       }
     }
 
     function appendGSTAmount(value) {
       const current = amountInput.value;
-      if (value === "." && current.includes(".")) return;
+      if (value === '.' && current.includes('.')) return;
       amountInput.value = current + value;
     }
 
     function clearGSTAmount() {
-      amountInput.value = "";
-    }
-
-    function deleteGSTAmount() {
-      amountInput.value = amountInput.value.slice(0, -1);
+      amountInput.value = '';
     }
 
     function formatRupees(value) {
-      return new Intl.NumberFormat("en-IN", {
-        style: "currency",
-        currency: "INR",
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }).format(value);
@@ -334,20 +425,18 @@
 
     function calculateGST(action) {
       const amount = Number(amountInput.value);
-      const rate = Number(document.getElementById("rate").value);
+      const rate = Number(document.getElementById('rate').value);
       const supply = document.querySelector('input[name="supply"]:checked').value;
-      const result = document.getElementById("gstResult");
+      const resultBox = document.getElementById('gstResult');
 
-      if (amountInput.value.trim() === "" || !Number.isFinite(amount) || amount < 0) {
-        result.textContent = "Please enter a valid, non-negative amount.";
+      if (amountInput.value.trim() === '' || !Number.isFinite(amount) || amount < 0) {
+        resultBox.textContent = 'Please enter a valid, non-negative amount.';
         return;
       }
 
-      let taxableAmount;
-      let gstAmount;
-      let totalAmount;
+      let taxableAmount, gstAmount, totalAmount;
 
-      if (action === "add") {
+      if (action === 'add') {
         taxableAmount = amount;
         gstAmount = taxableAmount * rate / 100;
         totalAmount = taxableAmount + gstAmount;
@@ -357,81 +446,81 @@
         gstAmount = totalAmount - taxableAmount;
       }
 
-      const cgst = supply === "intra" ? gstAmount / 2 : 0;
-      const sgst = supply === "intra" ? gstAmount / 2 : 0;
-      const igst = supply === "inter" ? gstAmount : 0;
+      const cgst = supply === 'intra' ? gstAmount / 2 : 0;
+      const sgst = supply === 'intra' ? gstAmount / 2 : 0;
+      const igst = supply === 'inter' ? gstAmount : 0;
       const halfRate = rate / 2;
 
-      result.innerHTML = `
-        Taxable amount: <strong>${formatRupees(taxableAmount)}</strong><br>
-        CGST (${supply === "intra" ? halfRate : 0}%): <strong>${formatRupees(cgst)}</strong><br>
-        SGST/UTGST (${supply === "intra" ? halfRate : 0}%): <strong>${formatRupees(sgst)}</strong><br>
-        IGST (${supply === "inter" ? rate : 0}%): <strong>${formatRupees(igst)}</strong><br>
-        Total GST: <strong>${formatRupees(gstAmount)}</strong><br>
-        ${action === "add" ? "Total including GST" : "Original amount including GST"}:
-        <strong>${formatRupees(totalAmount)}</strong>
+      resultBox.innerHTML = `
+        <div><strong>Taxable Amount:</strong> ${formatRupees(taxableAmount)}</div>
+        <div><strong>CGST (${supply === 'intra' ? halfRate : 0}%):</strong> ${formatRupees(cgst)}</div>
+        <div><strong>SGST/UTGST (${supply === 'intra' ? halfRate : 0}%):</strong> ${formatRupees(sgst)}</div>
+        <div><strong>IGST (${supply === 'inter' ? rate : 0}%):</strong> ${formatRupees(igst)}</div>
+        <div><strong>Total GST:</strong> ${formatRupees(gstAmount)}</div>
+        <div><strong>${action === 'add' ? 'Total including GST' : 'Original amount including GST'}:</strong> ${formatRupees(totalAmount)}</div>
       `;
     }
 
     const hsnCatalog = [
-      { code: "1001", description: "Wheat and meslin" },
-      { code: "1006", description: "Rice" },
-      { code: "0401", description: "Milk and cream, not concentrated" },
-      { code: "4901", description: "Printed books and similar printed material" },
-      { code: "6109", description: "T-shirts and similar garments, knitted or crocheted" },
-      { code: "6403", description: "Footwear with outer soles of rubber, plastics, leather, or composition leather" },
-      { code: "8471", description: "Automatic data-processing machines, including computers" },
-      { code: "8517", description: "Telephone sets and other communication apparatus" }
+      { code: '1001', description: 'Wheat and meslin', rate: '0%' },
+      { code: '1006', description: 'Rice', rate: '5%' },
+      { code: '0401', description: 'Milk and cream, not concentrated', rate: '5%' },
+      { code: '4901', description: 'Books and printed material', rate: '0%' },
+      { code: '6109', description: 'T-shirts and garments', rate: '5% / 12% / 18%' },
+      { code: '6403', description: 'Footwear', rate: '5% / 18%' },
+      { code: '8471', description: 'Computers and data-processing units', rate: '18%' },
+      { code: '8517', description: 'Telephone sets and communication equipment', rate: '18%' },
+      { code: '2106', description: 'Food preparations', rate: '5% / 18%' },
+      { code: '2202', description: 'Water, including mineral water', rate: '18%' },
+      { code: '3004', description: 'Medicines for human use', rate: '12% / 18%' },
+      { code: '8703', description: 'Motor cars', rate: '18%' },
+      { code: '2203', description: 'Beer and other fermented drinks', rate: '18%' },
+      { code: '2402', description: 'Cigarettes and tobacco products', rate: '28% / 40%+' }
     ];
 
-    function searchHSN() {
-      const query = document.getElementById("hsnSearch").value.trim().toLowerCase();
-      const results = document.getElementById("hsnResults");
+    const hsnSearch = document.getElementById('hsnSearch');
+    const hsnResults = document.getElementById('hsnResults');
 
+    hsnSearch.addEventListener('input', () => {
+      const query = hsnSearch.value.trim().toLowerCase();
       if (!query) {
-        results.textContent = "Enter a product name or code to search the sample catalog.";
+        hsnResults.innerHTML = 'Start typing to search the sample HSN catalog.';
         return;
       }
 
       const matches = hsnCatalog.filter(item =>
-        item.code.includes(query) || item.description.toLowerCase().includes(query)
+        item.code.toLowerCase().includes(query) || item.description.toLowerCase().includes(query)
       );
 
-      if (matches.length === 0) {
-        results.textContent =
-          "No sample match found. Try a broader product name or verify the HSN in official tariff information.";
+      if (!matches.length) {
+        hsnResults.innerHTML = '<div class="hsn-note">No sample match found. Try a broader keyword or confirm with official tariff data.</div>';
         return;
       }
 
-      const table = document.createElement("table");
-      const thead = document.createElement("thead");
-      const headerRow = document.createElement("tr");
-      ["HSN code", "Sample description"].forEach(label => {
-        const th = document.createElement("th");
-        th.scope = "col";
-        th.textContent = label;
-        headerRow.appendChild(th);
-      });
-      thead.appendChild(headerRow);
-      table.appendChild(thead);
+      const rows = matches.map(item => `
+        <tr>
+          <td><strong>${item.code}</strong></td>
+          <td>${item.description}</td>
+          <td>${item.rate}</td>
+        </tr>
+      `).join('');
 
-      const tbody = document.createElement("tbody");
-      matches.forEach(item => {
-        const row = document.createElement("tr");
-        const codeCell = document.createElement("td");
-        const descriptionCell = document.createElement("td");
-        codeCell.textContent = item.code;
-        descriptionCell.textContent = item.description;
-        row.append(codeCell, descriptionCell);
-        tbody.appendChild(row);
-      });
-      table.appendChild(tbody);
-
-      const note = document.createElement("p");
-      note.className = "hsn-note";
-      note.textContent = "These are sample search matches, not a determination of the correct classification or GST rate for your product.";
-      results.replaceChildren(table, note);
-    }
+      hsnResults.innerHTML = `
+        <div class="hsn-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>HSN</th>
+                <th>Description</th>
+                <th>Sample GST</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+        <p class="hsn-note" style="margin-top:12px;">This is a sample lookup only. Always verify classification and GST rate using the latest official HSN/SAC guidance.</p>
+      `;
+    });
   </script>
 </body>
 </html>
